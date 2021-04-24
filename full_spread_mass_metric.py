@@ -1,0 +1,180 @@
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot
+pyplot.rcParams.update({'font.size':40})
+from matplotlib.colors import LogNorm
+import numpy
+import unyt
+from velociraptor.tools.lines import binned_median_line as bml
+
+fig, ((ax1,ax2,ax3),(ax4,ax5,ax6),(ax7,ax8,ax9),(ax10,ax11,ax12)) = pyplot.subplots(4,3, figsize = (60,80), sharey = True)
+
+spread1 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/dm_spread.txt')
+mass1 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/average_halo_mass.txt')
+x_bins1 = numpy.logspace(numpy.log10(numpy.amin(mass1)), numpy.log10(numpy.amax(mass1)), num = 100)
+y_bins1 = numpy.logspace(numpy.log10(numpy.amin(spread1)), numpy.log10(numpy.amax(spread1)), num = 100)
+h1 = ax1.hist2d(mass1, spread1, bins = [x_bins1, y_bins1], norm = LogNorm())
+pyplot.colorbar(h1[3], ax=ax1)
+ax1.loglog()
+ax1.set_ylabel('Dm spread metric [Mpc]')
+ax1.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread2 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/gas_spread.txt')
+mass2 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/gas_average_halo_mass.txt')
+x_bins2 = numpy.logspace(numpy.log10(numpy.amin(mass2)), numpy.log10(numpy.amax(mass2)), num = 100)
+y_bins2 = numpy.logspace(numpy.log10(numpy.amin(spread2)), numpy.log10(numpy.amax(spread2)), num = 100)
+h2 = ax2.hist2d(mass2, spread2, bins = [x_bins2, y_bins2], norm = LogNorm())
+pyplot.colorbar(h2[3], ax=ax2)
+ax2.loglog()
+ax2.set_ylabel('Gas spread metric [Mpc]')
+ax2.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread3 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/star_spread.txt')
+mass3 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/star_average_halo_mass.txt')
+x_bins3 = numpy.logspace(numpy.log10(numpy.amin(mass3)), numpy.log10(numpy.amax(mass3)), num = 100)
+y_bins3 = numpy.logspace(numpy.log10(numpy.amin(spread3)), numpy.log10(numpy.amax(spread3)), num = 100)
+h3 = ax3.hist2d(mass3, spread3, bins = [x_bins3, y_bins3], norm = LogNorm())
+pyplot.colorbar(h3[3], ax=ax3)
+ax3.loglog()
+ax3.set_ylabel('Star spread metric [Mpc]')
+ax3.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread4 = spread1
+mass4 = mass1
+radius4 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/average_halo_radius.txt')
+mass_bins4 = numpy.logspace(numpy.log10(numpy.min(mass4)), numpy.log10(numpy.max(mass4)), 20)
+mass_bins4 = unyt.unyt_array(mass_bins4, units = unyt.msun)
+mass4 = unyt.unyt_array(mass4, units = unyt.msun)
+spread4 = unyt.unyt_array(spread4, units = unyt.Mpc)
+radius4 = unyt.unyt_array(radius4, units = unyt.Mpc)
+centers4, med4, err4 = bml(mass4, spread4, mass_bins4, minimum_in_bin = 1)
+rad_centers4, rad_med4, rad_err4 = bml(mass4, 2*radius4, mass_bins4, minimum_in_bin = 1)
+ax4.scatter(mass4, spread4, s = 0.1, edgecolor = None, alpha = 0.5)
+ax4.plot(centers4, med4, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax4.plot(rad_centers4, rad_med4, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax4.legend(loc = 'lower right')
+ax4.loglog()
+ax4.set_ylabel('DM spread metric [Mpc]')
+ax4.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread5 = spread2
+mass5 = mass2
+radius5 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/gas_average_halo_radius.txt')
+mass_bins5 = numpy.logspace(numpy.log10(numpy.min(mass5)), numpy.log10(numpy.max(mass5)), 20)
+mass_bins5 = unyt.unyt_array(mass_bins5, units = unyt.msun)
+mass5 = unyt.unyt_array(mass5, units = unyt.msun)
+spread5 = unyt.unyt_array(spread5, units = unyt.Mpc)
+radius5 = unyt.unyt_array(radius5, units = unyt.Mpc)
+centers5, med5, err5 = bml(mass5, spread5, mass_bins5, minimum_in_bin = 1)
+rad_centers5, rad_med5, rad_err5 = bml(mass5, 2*radius5, mass_bins5, minimum_in_bin = 1)
+ax5.scatter(mass5, spread5, s = 0.1, edgecolor = None, alpha = 0.5)
+ax5.plot(centers5, med5, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax5.plot(rad_centers5, rad_med5, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax5.legend(loc = 'lower right')
+ax5.loglog()
+ax5.set_ylabel('Gas spread metric [Mpc]')
+ax5.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread6 = spread3
+mass6 = mass3
+radius6 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/star_average_halo_radius.txt')
+mass_bins6 = numpy.logspace(numpy.log10(numpy.min(mass6)), numpy.log10(numpy.max(mass6)), 20)
+mass_bins6 = unyt.unyt_array(mass_bins6, units = unyt.msun)
+mass6 = unyt.unyt_array(mass6, units = unyt.msun)
+spread6 = unyt.unyt_array(spread6, units = unyt.Mpc)
+radius6 = unyt.unyt_array(radius6, units = unyt.Mpc)
+centers6, med6, err6 = bml(mass6, spread6, mass_bins6, minimum_in_bin = 1)
+rad_centers6, rad_med6, rad_err6 = bml(mass6, 2*radius6, mass_bins6, minimum_in_bin = 1)
+ax6.scatter(mass6, spread6, s = 0.1, edgecolor = None, alpha = 0.5)
+ax6.plot(centers6, med6, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax6.plot(rad_centers6, rad_med6, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax6.legend(loc = 'lower right')
+ax6.loglog()
+ax6.set_ylabel('Star spread metric [Mpc]')
+ax6.set_xlabel(r'Average halo mass [$M_{\odot}$]')
+
+spread7 = spread1
+mass7 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/average_stellar_mass.txt')
+x_bins7 = numpy.logspace(numpy.log10(numpy.amin(mass7)), numpy.log10(numpy.amax(mass7)), num = 100)
+y_bins7 = numpy.logspace(numpy.log10(numpy.amin(spread7)), numpy.log10(numpy.amax(spread7)), num = 100)
+h7 = ax7.hist2d(mass7, spread7, bins = [x_bins7, y_bins7], norm = LogNorm())
+pyplot.colorbar(h7[3], ax=ax7)
+ax7.loglog()
+ax7.set_ylabel('DM spread metric [Mpc]')
+ax7.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+spread8 = spread2
+mass8 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/gas_average_stellar_mass.txt')
+x_bins8 = numpy.logspace(numpy.log10(numpy.amin(mass8)), numpy.log10(numpy.amax(mass8)), num = 100)
+y_bins8 = numpy.logspace(numpy.log10(numpy.amin(spread8)), numpy.log10(numpy.amax(spread8)), num = 100)
+h8 = ax8.hist2d(mass8, spread8, bins = [x_bins8, y_bins8], norm = LogNorm())
+pyplot.colorbar(h8[3], ax=ax8)
+ax8.loglog()
+ax8.set_ylabel('Gas spread metric [Mpc]')
+ax8.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+spread9 = spread3
+mass9 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/star_average_stellar_mass.txt')
+x_bins9 = numpy.logspace(numpy.log10(numpy.amin(mass9)), numpy.log10(numpy.amax(mass9)), num = 100)
+y_bins9 = numpy.logspace(numpy.log10(numpy.amin(spread9)), numpy.log10(numpy.amax(spread9)), num = 100)
+h9 = ax9.hist2d(mass9, spread9, bins = [x_bins9, y_bins9], norm = LogNorm())
+pyplot.colorbar(h9[3], ax=ax9)
+ax9.loglog()
+ax9.set_ylabel('Star spread metric [Mpc]')
+ax9.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+spread10 = spread1
+mass10 = mass7
+radius10 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/average_stellar_radius.txt')
+mass_bins10 = numpy.logspace(numpy.log10(numpy.min(mass10)), numpy.log10(numpy.max(mass10)), 20)
+mass_bins10 = unyt.unyt_array(mass_bins10, units = unyt.msun)
+mass10 = unyt.unyt_array(mass10, units = unyt.msun)
+spread10 = unyt.unyt_array(spread10, units = unyt.Mpc)
+radius10 = unyt.unyt_array(radius10, units = unyt.Mpc)
+centers10, med10, err10 = bml(mass10, spread10, mass_bins10, minimum_in_bin = 1)
+rad_centers10, rad_med10, rad_err10 = bml(mass10, 2*radius10, mass_bins10, minimum_in_bin = 1)
+ax10.scatter(mass10, spread10, s = 0.1, edgecolor = None, alpha = 0.5)
+ax10.plot(centers10, med10, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax10.plot(rad_centers10, rad_med10, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax10.legend(loc = 'lower right')
+ax10.loglog()
+ax10.set_ylabel('DM spread metric [Mpc]')
+ax10.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+spread11 = spread2
+mass11 = mass8
+radius11 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/gas_average_stellar_radius.txt')
+mass_bins11 = numpy.logspace(numpy.log10(numpy.min(mass11)), numpy.log10(numpy.max(mass11)), 20)
+mass_bins11 = unyt.unyt_array(mass_bins11, units = unyt.msun)
+mass11 = unyt.unyt_array(mass11, units = unyt.msun)
+spread11 = unyt.unyt_array(spread11, units = unyt.Mpc)
+radius11 = unyt.unyt_array(radius11, units = unyt.Mpc)
+centers11, med11, err11 = bml(mass11, spread11, mass_bins11, minimum_in_bin = 1)
+rad_centers11, rad_med11, rad_err11 = bml(mass11, 2*radius11, mass_bins11, minimum_in_bin = 1)
+ax11.scatter(mass11, spread11, s = 0.1, edgecolor = None, alpha = 0.5)
+ax11.plot(centers11, med11, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax11.plot(rad_centers11, rad_med11, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax11.legend(loc = 'lower right')
+ax11.loglog()
+ax11.set_ylabel('Gas spread metric [Mpc]')
+ax11.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+spread12 = spread3
+mass12 = mass9
+radius12 = numpy.loadtxt('/cosma5/data/durham/dc-murr1/star_average_stellar_radius.txt')
+mass_bins12 = numpy.logspace(numpy.log10(numpy.min(mass12)), numpy.log10(numpy.max(mass12)), 20)
+mass_bins12 = unyt.unyt_array(mass_bins12, units = unyt.msun)
+mass12 = unyt.unyt_array(mass12, units = unyt.msun)
+spread12 = unyt.unyt_array(spread12, units = unyt.Mpc)
+radius12 = unyt.unyt_array(radius12, units = unyt.Mpc)
+centers12, med12, err12 = bml(mass12, spread12, mass_bins12, minimum_in_bin = 1)
+rad_centers12, rad_med12, rad_err12 = bml(mass12, 2*radius12, mass_bins12, minimum_in_bin = 1)
+ax12.scatter(mass12, spread12, s = 0.1, edgecolor = None, alpha = 0.5)
+ax12.plot(centers12, med12, linestyle = '--', linewidth = 6, color = 'black', label = 'Median spread')
+ax12.plot(rad_centers12, rad_med12, linestyle = '--', linewidth = 6, color = 'red', label = 'Median halo diameter')
+ax12.legend(loc = 'lower right')
+ax12.loglog()
+ax12.set_ylabel('Star spread metric [Mpc]')
+ax12.set_xlabel(r'Average halo stellar mass [$M_{\odot}$]')
+
+fig.savefig('/cosma5/data/durham/dc-murr1/full_spread_mass_metric.png')
